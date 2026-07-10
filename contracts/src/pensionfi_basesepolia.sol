@@ -8,8 +8,9 @@ interface IERC20 {
 }
 
 contract PensionMinimal {
-    address public constant USDT = 0x05105fa9611F7A23ce7008f19Bcc384a24921FE6;
-    address public vaultWallet = 0xd806A01E295386ef7a7Cea0B9DA037B242622743;
+    address public constant CAPITAL = 0x80CC64698B305499eE3827BE8974ae47a2B19803;
+    address public vaultWallet = 0xf1Ed7c5223c01ad7f5B3dFcc19AB005CA24f8A9b;
+    // 0xd806A01E295386ef7a7Cea0B9DA037B242622743;
 
     uint256 public planCount;
 
@@ -36,7 +37,7 @@ contract PensionMinimal {
         require(monthlyAmount > 0 && totalMonths > 0, "BAD_PARAMS");
 
         uint256 totalDeposit = monthlyAmount * totalMonths;
-        require(IERC20(USDT).transferFrom(msg.sender, vaultWallet, totalDeposit), "TRANSFER_FAIL");
+        require(IERC20(CAPITAL).transferFrom(msg.sender, vaultWallet, totalDeposit), "TRANSFER_FAIL");
 
         planCount++;
         plans[planCount] = Plan({
@@ -61,20 +62,46 @@ contract PensionMinimal {
         uint256 dueTime = p.startTime + (p.monthsPaid + 1) * MONTH;
         require(block.timestamp >= dueTime, "TOO_EARLY");
 
-        uint256 allowance = IERC20(USDT).allowance(vaultWallet, address(this));
-        uint256 balance = IERC20(USDT).balanceOf(vaultWallet);
+        uint256 allowance = IERC20(CAPITAL).allowance(vaultWallet, address(this));
+        uint256 balance = IERC20(CAPITAL).balanceOf(vaultWallet);
 
         if (allowance < p.monthlyAmount || balance < p.monthlyAmount) {
             emit PaymentFailed(planId, p.monthsPaid + 1, p.monthlyAmount);
             return;
         }
 
-        require(IERC20(USDT).transferFrom(vaultWallet, p.beneficiary, p.monthlyAmount), "PAY_FAIL");
+        require(IERC20(CAPITAL).transferFrom(vaultWallet, p.beneficiary, p.monthlyAmount), "PAY_FAIL");
 
         p.monthsPaid++;
         emit PaymentExecuted(planId, p.monthsPaid, p.monthlyAmount);
 
         if (p.monthsPaid == p.totalMonths) p.active = false;
+    }
+
+    // --- Get plan details ---
+    function getPlan(uint256 planId)
+        external
+        view
+        returns (
+            address beneficiary,
+            uint256 monthlyAmount,
+            uint256 totalMonths,
+            uint256 monthsPaid,
+            uint256 startTime,
+            bool active
+        )
+    {
+        Plan storage p = plans[planId];
+        require(p.beneficiary != address(0), "PLAN_NOT_FOUND");
+
+        return (
+            p.beneficiary,
+            p.monthlyAmount,
+            p.totalMonths,
+            p.monthsPaid,
+            p.startTime,
+            p.active
+        );
     }
 
     // --- Chainlink Automation ---
