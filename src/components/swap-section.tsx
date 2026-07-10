@@ -102,7 +102,12 @@ export default function SwapSection({ language }: SwapSectionProps) {
     // Pre-flight checks
     setStatus('Checking balances and allowances...')
     
+const network = await provider.getNetwork();
+
+console.log("Chain ID:", Number(network.chainId));
+console.log("Network:", network);
     // Check token balance
+    console.log(account, 'log account details')
     const balance = await token.balanceOf(account)
     console.log('Token balance:', balance.toString())
     
@@ -161,18 +166,26 @@ export default function SwapSection({ language }: SwapSectionProps) {
       const vault = new ethers.Contract(VAULT_ADDRESS, vaultAbi, signer)
       
       // Estimate gas first
-      const gasEstimate = await vault.deposit.estimateGas(
-        amountToInvest,
-        BigInt(lockTime)
-      )
-      console.log('Gas estimate:', gasEstimate.toString())
+      // const gasEstimate = await vault.deposit.estimateGas(
+      //   amountToInvest,
+      //   BigInt(lockTime)
+      // )
+
+      // const gasEstimate = await signer.estimateGas({
+      //   to: VAULT_ADDRESS,
+      //   data: vault.interface.encodeFunctionData("deposit", [
+      //     amountToInvest,
+      //     BigInt(lockTime),
+      //   ]),
+      // });
+      // console.log('Gas estimate:', gasEstimate.toString())
 
       const depositTx = await vault.deposit(
         amountToInvest,
         BigInt(lockTime),
-        {
-          gasLimit: gasEstimate * 120n / 100n // Add 20% buffer
-        }
+        // {
+        //   gasLimit: gasEstimate * 120n / 100n // Add 20% buffer
+        // }
       )
       
       await depositTx.wait()
