@@ -21,7 +21,8 @@ interface MyPlansProps {
 }
 
 // Contract addresses (Base Sepolia testnet)
-const PENSION_CONTRACT_ADDRESS = '0x12123d469941B880331472DF74b8C9414EC17499'
+const PENSION_CONTRACT_ADDRESS = '0xDAC93F20B8344f78DeADbBe95BDE01582819E6D2'
+// '0x12123d469941B880331472DF74b8C9414EC17499'
 const USDT_ADDRESS = '0x05105fa9611F7A23ce7008f19Bcc384a24921FE6'
 
 export default function MyPlans({ language, account }: MyPlansProps) {

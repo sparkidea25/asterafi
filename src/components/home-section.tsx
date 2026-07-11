@@ -69,7 +69,7 @@ export default function HomeSection({ language }: HomeSectionProps) {
       <div className="relative z-10 flex flex-col items-center justify-center min-h-full p-8 text-center">
         {/* Bank Animation */}
         <div className="mb-8">
-          <BankAnimation />
+          {/*<BankAnimation /> */}
         </div>
 
         {/* Main heading */}
