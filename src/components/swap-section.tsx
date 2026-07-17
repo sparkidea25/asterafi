@@ -9,7 +9,8 @@ import capitalAbi from '/abi/capital.json'
 import vaultAbi from '/abi/vault.json'
 
 // Contract addresses
-const VAULT_ADDRESS = '0xDAC93F20B8344f78DeADbBe95BDE01582819E6D2'
+const VAULT_ADDRESS = '0x831732D660934C167291C15b28D8e05004dca9c9'
+
 const CAPITAL_ADDRESS = '0x80CC64698B305499eE3827BE8974ae47a2B19803'
 
 interface SwapSectionProps {
