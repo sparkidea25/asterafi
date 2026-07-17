@@ -21,7 +21,7 @@ interface MyPlansProps {
 }
 
 // Contract addresses (Base Sepolia testnet)
-const PENSION_CONTRACT_ADDRESS = '0xDAC93F20B8344f78DeADbBe95BDE01582819E6D2'
+const PENSION_CONTRACT_ADDRESS = '0xE0D7B2FbBA51F8905428decd917046d30d7012De'
 // '0x12123d469941B880331472DF74b8C9414EC17499'
 const USDT_ADDRESS = '0x05105fa9611F7A23ce7008f19Bcc384a24921FE6'
 
@@ -321,15 +321,15 @@ export default function MyPlans({ language, account }: MyPlansProps) {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-500">{t.totalDeposited}</p>
-                        <p className="text-xl font-bold text-gray-800">${formatCurrency(totalDeposited)} USDT</p>
+                        <p className="text-xl font-bold text-gray-800">${formatCurrency(totalDeposited)} CAPITAL</p>
                       </div>
                       <div className="bg-green-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-500">{t.totalReceived}</p>
-                        <p className="text-xl font-bold text-green-800">${formatCurrency(totalReceived)} USDT</p>
+                        <p className="text-xl font-bold text-green-800">${formatCurrency(totalReceived)} CAPITAL</p>
                       </div>
                       <div className="bg-orange-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-500">{t.remainingBalance}</p>
-                        <p className="text-xl font-bold text-orange-800">${formatCurrency(remainingBalance)} USDT</p>
+                        <p className="text-xl font-bold text-orange-800">${formatCurrency(remainingBalance)} CAPITAL</p>
                       </div>
                     </div>
                     
@@ -344,7 +344,7 @@ export default function MyPlans({ language, account }: MyPlansProps) {
                       
                       <div>
                         <p className="text-sm text-gray-500">{t.monthlyAmount}</p>
-                        <p className="font-medium">${formatCurrency(plan.monthlyAmount)} USDT</p>
+                        <p className="font-medium">${formatCurrency(plan.monthlyAmount)} CAPITAL</p>
                       </div>
                       
                       <div>

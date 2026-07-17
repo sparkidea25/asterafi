@@ -13,8 +13,9 @@ interface PensionCalculatorProps {
 }
 
 // Contract addresses (Base Sepolia testnet)
-const PENSION_CONTRACT_ADDRESS = '0x12123d469941B880331472DF74b8C9414EC17499' // Pension contract
-const USDT_ADDRESS = '0x05105fa9611F7A23ce7008f19Bcc384a24921FE6' // Mock USDT on Base Sepolia
+const PENSION_CONTRACT_ADDRESS = '0xE0D7B2FbBA51F8905428decd917046d30d7012De' // Pension contract
+const CAPITAL_ADDRESS = '0x80CC64698B305499eE3827BE8974ae47a2B19803' // Mock USDT on Base Sepolia
+// USDT_ADDRESS
 
 export default function PensionCalculator({ language }: PensionCalculatorProps) {
   const [desiredPension, setDesiredPension] = useState<string>("1000")
@@ -46,12 +47,12 @@ export default function PensionCalculator({ language }: PensionCalculatorProps) 
       connectWallet: "Conectar Billetera",
       walletRequired: "Se requiere billetera conectada",
       insufficientFunds: "Fondos insuficientes",
-      approving: "Aprobando USDT...",
+      approving: "Aprobando CAPITAL...",
       creating: "Creando plan de pensión...",
       approveSuccess: "Aprobación exitosa ✅",
       connectToCreate: "Conecta tu billetera para crear un plan",
-      useUsdt: "Usa USDT en Base Sepolia para crear tu plan",
-      yourBalance: "Tu balance de USDT:",
+      useUsdt: "Usa CAPITAL en Base Sepolia para crear tu plan",
+      yourBalance: "Tu balance de CAPITAL:",
       loadingBalance: "Cargando balance..."
     },
     en: {
@@ -72,12 +73,12 @@ export default function PensionCalculator({ language }: PensionCalculatorProps) 
       connectWallet: "Connect Wallet",
       walletRequired: "Wallet connection required",
       insufficientFunds: "Insufficient funds",
-      approving: "Approving USDT...",
+      approving: "Approving CAPITAL...",
       creating: "Creating pension plan...",
       approveSuccess: "Approval successful ✅",
       connectToCreate: "Connect your wallet to create a plan",
-      useUsdt: "Use USDT on Base Sepolia to create your plan",
-      yourBalance: "Your USDT balance:",
+      useUsdt: "Use CAPITAL on Base Sepolia to create your plan",
+      yourBalance: "Your CAPITAL balance:",
       loadingBalance: "Loading balance..."
     }
   }
@@ -96,7 +97,7 @@ export default function PensionCalculator({ language }: PensionCalculatorProps) 
       setIsBalanceLoading(true)
       try {
         const provider = new ethers.BrowserProvider(window.ethereum)
-        const usdtContract = new ethers.Contract(USDT_ADDRESS, [
+        const usdtContract = new ethers.Contract(CAPITAL_ADDRESS, [
           "function balanceOf(address) view returns (uint256)"
         ], provider)
         
@@ -104,7 +105,7 @@ export default function PensionCalculator({ language }: PensionCalculatorProps) 
         const formattedBalance = ethers.formatUnits(balance, 6) // USDT has 6 decimals
         setUsdtBalance(formattedBalance)
       } catch (balanceError) {
-        console.warn('Could not fetch USDT balance:', balanceError)
+        console.warn('Could not fetch CAPITAL balance:', balanceError)
         setUsdtBalance("0")
       } finally {
         setIsBalanceLoading(false)
@@ -209,7 +210,7 @@ export default function PensionCalculator({ language }: PensionCalculatorProps) 
       const totalMonths = BigInt(years[0] * 12)
       
       // Create USDT contract instance
-      const usdtContract = new ethers.Contract(USDT_ADDRESS, [
+      const usdtContract = new ethers.Contract(CAPITAL_ADDRESS, [
         "function balanceOf(address) view returns (uint256)",
         "function allowance(address, address) view returns (uint256)",
         "function approve(address, uint256) returns (bool)"
@@ -313,8 +314,8 @@ export default function PensionCalculator({ language }: PensionCalculatorProps) 
                   {isBalanceLoading 
                     ? t.loadingBalance 
                     : usdtBalance !== "0" 
-                      ? `${usdtBalance} USDT` 
-                      : "0 USDT"}
+                      ? `${usdtBalance} CAPITAL` 
+                      : "0 CAPITAL"}
                 </div>
               </div>
               

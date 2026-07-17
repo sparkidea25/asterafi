@@ -10,11 +10,11 @@ interface IERC20 {
 contract PensionMinimal {
     address public constant CAPITAL = 0x80CC64698B305499eE3827BE8974ae47a2B19803;
     address public vaultWallet = 0xf1Ed7c5223c01ad7f5B3dFcc19AB005CA24f8A9b;
-    // 0xd806A01E295386ef7a7Cea0B9DA037B242622743;
 
     uint256 public planCount;
 
     struct Plan {
+        address contributor;
         address beneficiary;
         uint256 monthlyAmount;
         uint256 totalMonths;
@@ -34,17 +34,19 @@ contract PensionMinimal {
     // --- Crear plan ---
     function createPlan(address beneficiary, uint256 monthlyAmount, uint256 totalMonths) external returns (uint256) {
         require(beneficiary != address(0), "BAD_BEN");
-        require(monthlyAmount > 0 && totalMonths > 0, "BAD_PARAMS");
+        // require(monthlyAmount > 0 && totalMonths > 0, "BAD_PARAMS");
 
-        uint256 totalDeposit = monthlyAmount * totalMonths;
-        require(IERC20(CAPITAL).transferFrom(msg.sender, vaultWallet, totalDeposit), "TRANSFER_FAIL");
+        // uint256 totalDeposit = monthlyAmount * totalMonths;
+        require(IERC20(CAPITAL).transferFrom(msg.sender, vaultWallet, monthlyAmount), "TRANSFER_FAIL");
 
-        planCount++;
-        plans[planCount] = Plan({
+        // planCount++;
+        uint256 planId = ++planCount;
+        plans[planId] = Plan({
+            contributor: msg.sender,
             beneficiary: beneficiary,
             monthlyAmount: monthlyAmount,
             totalMonths: totalMonths,
-            monthsPaid: 0,
+            monthsPaid: 1,
             startTime: block.timestamp,
             active: true
         });
@@ -53,24 +55,27 @@ contract PensionMinimal {
         return planCount;
     }
 
-    // --- Procesar pago de un plan ---
+    // --- Process payment for a plan ---
     function processPayment(uint256 planId) public {
         Plan storage p = plans[planId];
         require(p.active, "INACTIVE_PLAN");
         require(p.monthsPaid < p.totalMonths, "ALL_PAID");
 
-        uint256 dueTime = p.startTime + (p.monthsPaid + 1) * MONTH;
+        // uint256 dueTime = p.startTime + (p.monthsPaid + 1) * MONTH;
+        uint256 dueTime = p.startTime + p.monthsPaid * MONTH;
         require(block.timestamp >= dueTime, "TOO_EARLY");
 
-        uint256 allowance = IERC20(CAPITAL).allowance(vaultWallet, address(this));
-        uint256 balance = IERC20(CAPITAL).balanceOf(vaultWallet);
+        uint256 allowance = IERC20(CAPITAL).allowance(p.contributor, address(this));
+
+        // .allowance(vaultWallet, address(this));
+        uint256 balance = IERC20(CAPITAL).balanceOf(p.contributor);
 
         if (allowance < p.monthlyAmount || balance < p.monthlyAmount) {
             emit PaymentFailed(planId, p.monthsPaid + 1, p.monthlyAmount);
             return;
         }
 
-        require(IERC20(CAPITAL).transferFrom(vaultWallet, p.beneficiary, p.monthlyAmount), "PAY_FAIL");
+        require(IERC20(CAPITAL).transferFrom(p.contributor, p.beneficiary, p.monthlyAmount), "PAY_FAIL");
 
         p.monthsPaid++;
         emit PaymentExecuted(planId, p.monthsPaid, p.monthlyAmount);
